@@ -1,0 +1,4 @@
+/project_gui/
+yolo.pt
+Patch_model_padding_2_classes.pth
+__pycache__
