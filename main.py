@@ -65,11 +65,11 @@ if 'selection' not in st.session_state or st.session_state['selection']== 'None'
     )
     
     # Options selection
-    selected_option = st.selectbox("Select one of the options:",options = ('select...','Train the model', 'Investigate a mammogram'))
+    selected_option = st.selectbox("Select one of the options:",options = ('select...','How to train the model', 'Investigate a mammogram'))
 
     # Selected to Train the model 
-    if selected_option == 'Train the model':
-        st.session_state['selection'] = 'Train the model'
+    if selected_option == 'How to train the model':
+        st.session_state['selection'] = 'How to train the model'
         # Run again to remove the headline
         st.experimental_rerun()
     
@@ -81,8 +81,27 @@ if 'selection' not in st.session_state or st.session_state['selection']== 'None'
     else:
         st.session_state['selection'] = 'None'
 
+####################################################################
+###################### Option 1 ####################################
+####################################################################
+
 #  Option #1 selected: Train the model
-if st.session_state['selection'] == 'Train the model':
+if st.session_state['selection'] == 'How to train the model':
+    
+    # back button functionality 
+    # Create columns. The first one takes up most of the space, the second one is for the button.
+    col1, col2 = st.columns([4,1])
+
+    with col1:
+        st.write("")  # Just to put something here.
+
+    with col2:
+        if st.button('Go back to Main menu :back:'):
+            st.session_state['selection'] = 'None'
+            # Run again to remove the headline
+            st.experimental_rerun()
+    
+    
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["1\. About the Dataset", "2\. Train the YOLO Model", 
                                       "3\. Train the patch Model","4\. Train the classifier Model","5\. Evaluate the Full model"])
 
@@ -165,13 +184,13 @@ if st.session_state['selection'] == 'Train the model':
         """, unsafe_allow_html=True
         )
 
-        # 4. Train the Classifer 
+    # 4. Train the Classifer 
     with tab4:
         st.markdown(
         """
         <div style='text-align: justify; font-family: Arial, sans-serif;'>
         <p>For training the Classifer model, follow these steps:
-        \n 1. Classifer model is availble on the following link: todo - add this 
+        \n 1. Classifer model is availble on the following link: :red[todo] - add this 
         \n 2. Change the dataset_dir to your own folder 
         \n 3. **Training model:** Train the model to run_mode = "training_model"
         \n 4. Before running the trainning section, you can modify a couple of hyper parameters in the "Defintions" block:
@@ -194,8 +213,42 @@ if st.session_state['selection'] == 'Train the model':
         """, unsafe_allow_html=True
         )
 
+    # 4. Evaluate the Full model
+    with tab5:
+        st.markdown(
+        """
+        <div style='text-align: justify; font-family: Arial, sans-serif;'>
+        <p>For Evaluating the Full model, follow these steps:
+        \n 1. Download the vs code from this repository https://github.com/amirsalhuv/MassDetector/blob/main/Final_model.ipynb
+        \n 2. Change the dataset_dir to your own folder 
+        \n 3. Make sure your .npy files are availible
+        \n 4. Make sure your run_mode is set to run_mode = "evaluate_model"
+        \n 5. Enjoy the ride
+        \n ## Evaluation process</p></div>
+        """, unsafe_allow_html=True
+        )
+        st.image("evaluating_the_model.png",width=1000)
+
+####################################################################
+###################### Option 2 ####################################
+####################################################################
 #  Option #2 selected: Investigate a mammogram
 if st.session_state['selection'] == 'Investigate a mammogram':
+    
+    # back button functionality 
+    # Create columns. The first one takes up most of the space, the second one is for the button.
+    col1, col2 = st.columns([4,1])
+
+    with col1:
+        st.write("")  # Just to put something here.
+
+    with col2:
+        if st.button('Go back to Main menu :back:'):
+            st.session_state['selection'] = 'None'
+            # Run again to remove the headline
+            st.experimental_rerun()
+
+    # Create the side bar for uploading an image 
     st.sidebar.markdown("## Upload new Mammogram image", unsafe_allow_html=True)
 
     # Function that analyze the image 
@@ -217,18 +270,22 @@ if st.session_state['selection'] == 'Investigate a mammogram':
         # Right image - will be a detected lesion according to a map (blue - benign, red - malignant)
         model = st.session_state['model']
         mask = analyze_image(image,model)
-        image_with_mask = create_masked_image(image,mask)
+        image_with_mask,largest_contour_area = create_masked_image(image,mask)
 
         col2.image(image_with_mask.resize((512,512)))
 
-        verdict = 'Malignant'
-        # todo - add classification 
+        verdict = 'Benign'
+        # todo - add classification
+        # Seperators 
+        col3.markdown("<h2 style='text-align: left; color: white;'>Lesion info</h2>", unsafe_allow_html=True)
+
+        # Chcek what is the verdict 
         if verdict == 'Malignant':
-            col3.markdown("<h2 style='text-align: left; color: #dc3545;'>Malignant</h2>", unsafe_allow_html=True)
+            col3.markdown("Lesion is **:red[Malignant]**")
         elif verdict == 'Benign':
-            col3.markdown("<h2 style='text-align: left; color: #ffc107;'>Benign</h2>", unsafe_allow_html=True)
+            col3.markdown("Lesion is **:orange[Benign]**")
         else:
-            col3.markdown("<h2 style='text-align: left; color: #28a745;'>Healthy</h2>", unsafe_allow_html=True)
+            col3.markdown("**:green[No lesion]**")
 
         # Add the option to download the image 
         with col3:
@@ -239,7 +296,8 @@ if st.session_state['selection'] == 'Investigate a mammogram':
                 file_name='download.png',
                 mime='image/png',
             )
-        col3.write(f"Image resulotion is {image_with_mask.size}")
+        col3.write(f"Image resulotion is {image_with_mask.size} pixel")
+        col3.write(f"Largest lesion area is {largest_contour_area} squared pixels")
 
 
     uploaded_file = st.sidebar.file_uploader("Please upload your Mammogram image (Accepted formats: png, jpg, jpeg)", type=["png", "jpg", "jpeg"], help="Drag and drop a file or click to select")

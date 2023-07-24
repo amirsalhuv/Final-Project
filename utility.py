@@ -68,13 +68,16 @@ def create_masked_image(image, mask):
     contours, _ = cv2.findContours(mask_np, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     largest_contour = max(contours, key=cv2.contourArea)
 
+    # Compute the area of the largest contour
+    largest_contour_area = cv2.contourArea(largest_contour)
+
     # Draw the largest contour on the image
     image_np = cv2.drawContours(image_np, [largest_contour], -1, (255,255,0), 10)
 
     # Convert the NumPy array with the contour back to a PIL Image
     image_with_contour = Image.fromarray(image_np)
 
-    return image_with_contour
+    return image_with_contour,largest_contour_area
 
 
 def pil_to_byte_array(pil_image):
