@@ -4,6 +4,7 @@ import numpy as np
 from PIL import Image
 from torch import nn
 import cv2
+from torchvision import models
 
 
 class CombinedModel(nn.Module):
@@ -157,3 +158,29 @@ class VGGUnet(nn.Module):
 
           return x
 
+class Classifer_model(nn.Module):
+      def __init__(self):
+        super().__init__()
+
+        # Load pre-trained VGG16 model and adjust the final layer
+        self.classifer_model = models.vgg16(pretrained=True)
+
+        #print(models.vgg16_bn(pretrained=True))
+
+        # Change the final layer of VGG16 Model for Transfer Learning
+        self.classifer_model.classifier[6] = torch.nn.Sequential(
+            torch.nn.Linear(4096, 256),
+            torch.nn.BatchNorm1d(256),  # Batch Normalization layer
+            torch.nn.ReLU(),
+            torch.nn.Dropout(0.4),
+            torch.nn.Linear(256, 2), # Since we have two classes
+            torch.nn.LogSoftmax(dim=1) # For using NLLLoss()
+          )
+
+      def forward(self, x):
+
+
+        x = self.classifer_model(x)
+
+        return x
+      

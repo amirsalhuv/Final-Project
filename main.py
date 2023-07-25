@@ -12,7 +12,7 @@ import numpy as np
 from torchvision import transforms
 import tempfile
 import base64
-from utility import analyze_image,build_models,create_masked_image,pil_to_byte_array
+from utility import analyze_image,build_models,create_masked_image,pil_to_byte_array,model_classification
 
 # Load the page 
 st.set_page_config(layout="wide", page_title="Breast lesion genie",page_icon=":female_genie:")
@@ -275,18 +275,22 @@ if st.session_state['selection'] == 'Investigate a mammogram':
 
         col2.image(image_with_mask.resize((512,512)))
 
-        verdict = 'Benign'
-        # todo - add classification
+        # Classification 
+        verdict = model_classification(image,mask)
+
         # Seperators 
         col3.markdown("<h2 style='text-align: left; color: white;'>Lesion info</h2>", unsafe_allow_html=True)
 
         # Chcek what is the verdict 
         if verdict == 'Malignant':
-            col3.markdown("Lesion is **:red[Malignant]**")
+            col3.markdown("Mammogram has **:red[:warning: Malignant] lesions**")
         elif verdict == 'Benign':
-            col3.markdown("Lesion is **:orange[Benign]**")
+            col3.markdown("Mammogram has **:orange[:warning: Benign] lesions**")
         else:
-            col3.markdown("**:green[No lesion]**")
+            col3.markdown("**:green[:heavy_check_mark: No lesion ]**")
+
+        col3.write(f"Image resulotion: {image_with_mask.size} $pixels$")
+        col3.write(f"Largest lesion area: {largest_contour_area} $$pixelss^2$$ ")
 
         # Add the option to download the image 
         with col3:
@@ -297,8 +301,6 @@ if st.session_state['selection'] == 'Investigate a mammogram':
                 file_name='download.png',
                 mime='image/png',
             )
-        col3.write(f"Image resulotion is {image_with_mask.size} pixel")
-        col3.write(f"Largest lesion area is {largest_contour_area} squared pixels")
 
 
     uploaded_file = st.sidebar.file_uploader("Please upload your Mammogram image (Accepted formats: png, jpg, jpeg)", type=["png", "jpg", "jpeg","pgm"], help="Drag and drop a file or click to select")
