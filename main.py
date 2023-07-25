@@ -8,7 +8,7 @@ import cv2
 import streamlit as st
 import torch
 from PIL import Image
-import numpy as npcla
+import numpy as np
 from torchvision import transforms
 import tempfile
 import base64
@@ -264,6 +264,7 @@ if st.session_state['selection'] == 'Investigate a mammogram':
         with col3:
             st.write(' ')
         
+
         image = Image.open(upload)
         resized_image = image.resize((512, 512))  # Resizes the image to be 400 pixels wide and 300 pixels tall
 
@@ -300,7 +301,7 @@ if st.session_state['selection'] == 'Investigate a mammogram':
         col3.write(f"Largest lesion area is {largest_contour_area} squared pixels")
 
 
-    uploaded_file = st.sidebar.file_uploader("Please upload your Mammogram image (Accepted formats: png, jpg, jpeg)", type=["png", "jpg", "jpeg"], help="Drag and drop a file or click to select")
+    uploaded_file = st.sidebar.file_uploader("Please upload your Mammogram image (Accepted formats: png, jpg, jpeg)", type=["png", "jpg", "jpeg","pgm"], help="Drag and drop a file or click to select")
 
     # Analyze one image 
     if uploaded_file is not None:
