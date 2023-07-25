@@ -1,4 +1,5 @@
 /project_gui/
 yolo.pt
 Patch_model_padding_2_classes.pth
+classifier_model_padding.pth
 __pycache__

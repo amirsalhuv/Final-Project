@@ -190,7 +190,7 @@ if st.session_state['selection'] == 'How to train the model':
         """
         <div style='text-align: justify; font-family: Arial, sans-serif;'>
         <p>For training the Classifer model, follow these steps:
-        \n 1. Classifer model is availble on the following link: :red[todo] - add this 
+        \n 1. Classifer model is availble on the following link: https://github.com/amirsalhuv/MassDetector/blob/main/Classfication_model.ipynb 
         \n 2. Change the dataset_dir to your own folder 
         \n 3. **Training model:** Train the model to run_mode = "training_model"
         \n 4. Before running the trainning section, you can modify a couple of hyper parameters in the "Defintions" block:
