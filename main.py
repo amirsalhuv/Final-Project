@@ -290,7 +290,7 @@ if st.session_state['selection'] == 'Investigate a mammogram':
             col3.markdown("**:green[:heavy_check_mark: No lesion ]**")
 
         col3.write(f"Image resulotion: {image_with_mask.size} $pixels$")
-        col3.write(f"Largest lesion area: {largest_contour_area} $$pixelss^2$$ ")
+        col3.write(f"Largest lesion area: {largest_contour_area} $$pixels^2$$ ")
 
         # Add the option to download the image 
         with col3:
